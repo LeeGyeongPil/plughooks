@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "plugins": {
+    "linter@team-mkt": [
+      {
+        "scope": "user",
+        "installPath": "__ROOT__/home/.claude/plugins/cache/team-mkt/linter/2.0.0",
+        "version": "2.0.0"
+      }
+    ]
+  }
+}

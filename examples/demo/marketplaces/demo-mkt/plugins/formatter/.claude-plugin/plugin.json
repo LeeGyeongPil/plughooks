@@ -1,0 +1,13 @@
+{
+  "name": "formatter",
+  "version": "0.3.0",
+  "description": "Practice fixture: formats after writes",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [{ "type": "command", "command": "echo formatted" }]
+      }
+    ]
+  }
+}

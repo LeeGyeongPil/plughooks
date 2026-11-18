@@ -1,0 +1,6 @@
+{
+  "demo-mkt": {
+    "source": { "source": "directory", "path": "__ROOT__/marketplaces/demo-mkt" },
+    "installLocation": "__ROOT__/marketplaces/demo-mkt"
+  }
+}

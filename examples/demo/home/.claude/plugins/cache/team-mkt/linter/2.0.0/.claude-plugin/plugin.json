@@ -1,0 +1,5 @@
+{
+  "name": "linter",
+  "version": "2.0.0",
+  "description": "Practice fixture: lints after each edit"
+}

@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "__ROOT__/home/.claude/plugins/cache/team-mkt/linter/2.0.0/scripts/lint.sh" }
+        ]
+      }
+    ]
+  }
+}

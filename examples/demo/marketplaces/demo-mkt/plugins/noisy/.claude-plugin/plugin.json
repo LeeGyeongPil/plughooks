@@ -1,0 +1,5 @@
+{
+  "name": "noisy",
+  "version": "1.0.0",
+  "description": "Practice fixture: a greeting skill plus context-injecting hooks"
+}

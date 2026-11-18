@@ -1,0 +1,14 @@
+{
+  "enabledPlugins": {
+    "noisy@demo-mkt": false,
+    "linter@team-mkt": false
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit.*",
+        "hooks": [{ "type": "command", "command": "npx prettier --write ." }]
+      }
+    ]
+  }
+}

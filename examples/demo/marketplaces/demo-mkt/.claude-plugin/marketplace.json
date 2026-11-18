@@ -1,0 +1,8 @@
+{
+  "name": "demo-mkt",
+  "owner": { "name": "Practice fixture" },
+  "plugins": [
+    { "name": "noisy", "source": "./plugins/noisy", "description": "Practice fixture: nice skill, noisy hooks" },
+    { "name": "formatter", "source": "./plugins/formatter", "description": "Practice fixture: formats after writes" }
+  ]
+}

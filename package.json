@@ -1,0 +1,21 @@
+{
+  "name": "plughooks",
+  "version": "0.1.0",
+  "description": "Show where Claude Code hooks come from (settings and plugins, including disabled ones) and keep hook-free local copies of plugins in sync.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "plughooks": "dist/cli.js" },
+  "files": ["dist", "README.md", "README.ko.md", "LICENSE", "CHANGELOG.md"],
+  "engines": { "node": ">=22" },
+  "keywords": ["claude-code", "hooks", "plugins", "cli", "settings"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.test.json && node --test --test-concurrency=4 \"dist-test/test/*.test.js\"",
+    "demo": "npm run build && node scripts/demo.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "typescript": "7.0.2"
+  }
+}
