@@ -26,7 +26,7 @@ npm install -g .      # puts `plughooks` on your PATH
 plughooks --version
 ```
 ```text
-0.1.1
+0.1.2
 ```
 
 Or skip the global install and run `node dist/cli.js <command>` from the clone.
@@ -164,7 +164,7 @@ flowchart LR
 
 ### Limits
 
-Installed-plugin file formats come from public docs and issue reports, not every real install; frontmatter is read in block-style YAML only. Not supported yet (at most a warning): hooks modules, plugins loaded with `--plugin-dir` (`@inline`), `@synced` plugins, and hooks from `--add-dir` or `--settings`. Only the plugin's declared files are read; plughooks does not run `claude`. Known rough edges: `doctor` W010 words a deleted copy folder like a changed source (`sync --check` reports `copy-missing` correctly); applying an already applied `trim` again prints an empty `Diff:` and still writes a numbered backup.  A dangling symlink inside a plugin makes `trim` stop with a generic error (exit 3).
+Installed-plugin file formats come from public docs and issue reports, not every real install; frontmatter is read in block-style YAML only. Not supported yet (at most a warning): hooks modules, plugins loaded with `--plugin-dir` (`@inline`), `@synced` plugins, and hooks from `--add-dir` or `--settings`. Only the plugin's declared files are read; plughooks does not run `claude`. Known rough edges: `doctor` W010 words a deleted copy folder like a changed source (`sync --check` reports `copy-missing` correctly); applying an already applied `trim` again prints an empty `Diff:` and still writes a numbered backup.
 
 ## Development
 ```bash

@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+## [0.1.2] - 2026-11-19
+
+### Fixed
+- `trim` and `sync` no longer fail with ENOENT when a plugin folder contains a dangling symlink; links are kept as links and hashed by their target string.
+
 ## [0.1.1] - 2026-11-19
 
 ### Fixed
