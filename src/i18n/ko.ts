@@ -100,6 +100,7 @@ export const ko: Record<MessageKey, string> = {
   "w.W007": "{event} 의 매처 \"{matcher}\" 는 고정되지 않은 정규식이라 의도한 도구 외에 {tools} 에도 일치합니다. 원치 않으면 ^...$ 로 고정하세요.",
   "w.W008": "hooks/hooks.json 에 {\"hooks\": ...} 래퍼가 없습니다. 내용은 그대로 읽었지만 Claude Code 가 로드하려면 래퍼로 감싸야 합니다.",
   "w.W009": "installed_plugins.json 이 plughooks 가 모르는 형식입니다({detail}). 대신 마켓과 캐시에서 플러그인을 찾았습니다.",
+  "w.W010.missing": "사본 {copy} 의 폴더가 지워졌습니다(원본 {source}). plughooks sync --apply 로 다시 만드세요.",
   "w.W010": "사본 {copy} 이(가) 오래됐습니다: 원본 {source} 이(가) 바뀌었습니다({old} -> {now}). plughooks sync --apply 를 실행하세요.",
   "w.W011": "plughooks 가 해석하지 않는 훅 관련 위치를 발견했습니다({detail}).",
   "w.by.default": "기본값",

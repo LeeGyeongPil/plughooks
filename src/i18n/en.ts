@@ -99,6 +99,7 @@ Exit codes: 0 ok, 1 warnings with --strict or sync needed, 2 usage or input erro
   "w.W007": "Matcher \"{matcher}\" on {event} is an unanchored regex; besides the intended tool it also matches {tools}. Anchor it (^...$) if that is not wanted.",
   "w.W008": "hooks/hooks.json has no {\"hooks\": ...} wrapper. The hooks in it were read anyway; wrap them so Claude Code can load the file.",
   "w.W009": "installed_plugins.json has a format plughooks does not know ({detail}). Plugins were found from marketplaces and the cache instead.",
+  "w.W010.missing": "Copy {copy} is missing: its folder was deleted (source {source}). Run plughooks sync --apply to rebuild it.",
   "w.W010": "Copy {copy} is out of date: source {source} changed ({old} -> {now}). Run plughooks sync --apply.",
   "w.W011": "A hook-related location was found that plughooks does not interpret ({detail}).",
   "w.by.default": "its default",

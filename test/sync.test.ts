@@ -83,6 +83,13 @@ test("a deleted copy folder is reported as copy-missing and sync --apply rebuild
   assert.equal(check.code, 1);
   assert.equal(json<SyncJson>(check).items[0].status, "copy-missing");
   assert.match(cli(c, ["sync", "--check"]).stdout, /copy-missing/);
+  const en = cli(c, ["doctor", "--lang", "en"]).stdout;
+  assert.match(en, /W010|trimmed-copy-stale/);
+  assert.match(en, /deleted/);
+  assert.doesNotMatch(en, /changed|->/);
+  const ko = cli(c, ["doctor", "--lang", "ko"]).stdout;
+  assert.match(ko, /지워졌습니다/);
+  assert.doesNotMatch(ko, /->/);
   assert.equal(cli(c, ["sync", "--apply"]).code, 0);
   assert.ok(existsSync(`${c.claudeDir}/plughooks-marketplace/plugins/noisy-nohooks/skills/hello/SKILL.md`));
   assert.equal(json<SyncJson>(cli(c, ["sync", "--check", "--json"])).items[0].status, "up-to-date");

@@ -107,6 +107,7 @@ export class Renderer {
       const layer = String(w.data.layer);
       params.by = layer === "default" ? this.t("w.by.default") : this.where(String(w.data.by), layer);
     }
+    if (w.code === "W010" && w.data.status === "copy-missing") return this.t("w.W010.missing", params);
     return this.t(`w.${w.code}` as MessageKey, params);
   }
 

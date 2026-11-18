@@ -137,7 +137,7 @@ export function runDoctor(res: Resolved, out?: string): Warning[] {
 
   for (const it of checkSync(res, out)) {
     if (it.status === "changed" || it.status === "copy-missing") {
-      w.push(mk("W010", { pluginId: it.copy, data: { copy: it.copy, source: it.source, old: it.oldHash, now: it.newHash ?? "" } }));
+      w.push(mk("W010", { pluginId: it.copy, data: { status: it.status, copy: it.copy, source: it.source, old: it.oldHash, now: it.newHash ?? "" } }));
     }
   }
 
