@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+## [0.1.4] - 2026-11-19
+
+### Fixed
+- Re-applying a `trim` whose settings are already up to date no longer prints an empty `Diff:` or writes a numbered backup; it says "No change" and leaves the settings file alone (`--json` adds `settingsUnchanged`).
+
 ## [0.1.3] - 2026-11-19
 
 ### Fixed

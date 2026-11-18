@@ -1,6 +1,6 @@
 {
   "name": "plughooks",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Show where Claude Code hooks come from (settings and plugins, including disabled ones) and keep hook-free local copies of plugins in sync.",
   "license": "MIT",
   "type": "module",
