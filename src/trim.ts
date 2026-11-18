@@ -325,6 +325,8 @@ export function planTrim(res: Resolved, o: TrimOptions): TrimPlan {
 export interface TrimResult {
   copyDir: string;
   backup: string | undefined;
+  /** True when the settings file already had every assigned value, so it was neither backed up nor rewritten. */
+  settingsUnchanged: boolean;
 }
 
 /** Write the copy, marketplace file, lock, and (last) the settings patch. */
@@ -338,8 +340,9 @@ export function applyTrim(plan: TrimPlan): TrimResult {
     sourceHash: plan.sourceHash,
     drop: plan.drop,
   });
-  const backup = plan.settings === undefined ? undefined : applyJsonPatch(plan.settings);
-  return { copyDir, backup };
+  const settingsUnchanged = plan.settings !== undefined && plan.settings.after === plan.settings.before;
+  const backup = plan.settings === undefined || settingsUnchanged ? undefined : applyJsonPatch(plan.settings);
+  return { copyDir, backup, settingsUnchanged };
 }
 
 /** Minimal line diff (LCS) with one line of context, for the settings change preview. */

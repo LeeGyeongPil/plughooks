@@ -140,8 +140,11 @@ export class Renderer {
       out.push(this.t("trim.settings", { where: this.where(plan.settings.file, plan.settingsLayer) }));
       out.push(`  ${this.t("trim.assign")}:`);
       for (const a of plan.assignments) out.push(`    ${a}`);
-      out.push(`  ${this.t("trim.diff")}:`);
-      for (const l of lineDiff(plan.settings.before, plan.settings.after)) out.push(`    ${l}`);
+      if (plan.settings.after === plan.settings.before) out.push(`  ${this.t("trim.noChange")}`);
+      else {
+        out.push(`  ${this.t("trim.diff")}:`);
+        for (const l of lineDiff(plan.settings.before, plan.settings.after)) out.push(`    ${l}`);
+      }
       if (plan.overrideFile !== undefined) out.push("  ! " + this.t("trim.override", { file: this.where(plan.overrideFile, undefined) }));
     }
     out.push("", this.t("trim.notices"));
@@ -154,7 +157,9 @@ export class Renderer {
     else {
       out.push(this.t("trim.wrote.copy", { dir: result.copyDir }));
       out.push(this.t("trim.wrote.market", { dir: plan.out }));
-      if (plan.settings !== undefined) {
+      if (plan.settings !== undefined && result.settingsUnchanged) {
+        out.push(this.t("trim.wrote.settingsUnchanged", { file: plan.settings.file }));
+      } else if (plan.settings !== undefined) {
         out.push(
           result.backup === undefined
             ? this.t("trim.wrote.settingsNew", { file: plan.settings.file })
@@ -178,6 +183,7 @@ export class Renderer {
       settings: plan.settings === undefined ? null : { file: plan.settings.file, layer: plan.settingsLayer, assignments: plan.assignments },
       applied: result !== undefined,
       backup: result?.backup ?? null,
+      settingsUnchanged: result?.settingsUnchanged ?? false,
     };
   }
 

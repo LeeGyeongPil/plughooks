@@ -204,3 +204,22 @@ test("dangling symlink named *.md under skills/ does not break list, doctor, tri
   assert.equal(cli(c, ["trim", "noisy@demo-mkt", "--apply"]).code, 0);
   assert.equal(cli(c, ["sync"]).code, 0);
 });
+
+test("applying the same trim twice leaves settings alone: no empty Diff, no extra backup", () => {
+  const c = makeCase({}, { demo: true });
+  const settings = "home/.claude/settings.json";
+  assert.equal(cli(c, ["trim", NOISY, "--apply"]).code, 0);
+  const afterFirst = c.read(settings);
+  assert.ok(existsSync(c.p(`${settings}.plughooks.bak`)));
+  const r = cli(c, ["trim", NOISY, "--apply"]);
+  assert.equal(r.code, 0, r.stderr);
+  assert.ok(!existsSync(c.p(`${settings}.plughooks.bak.1`)));
+  assert.equal(c.read(settings), afterFirst);
+  assert.doesNotMatch(r.stdout, /Diff:/);
+  assert.match(r.stdout, /No change: the settings already have these values/);
+  assert.doesNotMatch(r.stdout, /^patched /m);
+  const j = json<{ backup: string | null; settingsUnchanged: boolean }>(cli(c, ["trim", NOISY, "--apply", "--json"]));
+  assert.equal(j.backup, null);
+  assert.equal(j.settingsUnchanged, true);
+  assert.ok(!existsSync(c.p(`${settings}.plughooks.bak.1`)));
+});

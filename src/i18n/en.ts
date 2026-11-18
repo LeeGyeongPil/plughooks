@@ -127,6 +127,8 @@ Exit codes: 0 ok, 1 warnings with --strict or sync needed, 2 usage or input erro
   "trim.wrote.copy": "wrote copy: {dir}",
   "trim.wrote.market": "wrote marketplace and lock in {dir}",
   "trim.wrote.settings": "patched {file} (backup: {backup})",
+  "trim.noChange": "No change: the settings already have these values.",
+  "trim.wrote.settingsUnchanged": "left {file} as is (already up to date, no backup made)",
   "trim.wrote.settingsNew": "created {file}",
 
   "sync.none": "No plughooks copies found (nothing to check). Create one with plughooks trim.",

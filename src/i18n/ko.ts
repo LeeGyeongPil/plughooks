@@ -128,6 +128,8 @@ export const ko: Record<MessageKey, string> = {
   "trim.wrote.copy": "사본 작성: {dir}",
   "trim.wrote.market": "마켓과 lock 작성: {dir}",
   "trim.wrote.settings": "{file} 수정 (백업: {backup})",
+  "trim.noChange": "변경 없음: 설정에 이미 이 값들이 있습니다.",
+  "trim.wrote.settingsUnchanged": "{file} 은(는) 이미 최신이라 그대로 둠(백업 만들지 않음)",
   "trim.wrote.settingsNew": "{file} 생성",
 
   "sync.none": "plughooks 사본이 없습니다(확인할 것 없음). plughooks trim 으로 만드세요.",
