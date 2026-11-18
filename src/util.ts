@@ -52,6 +52,15 @@ export function copyTree(src: string, dest: string, skip: ReadonlySet<string> = 
   walk(src, dest);
 }
 
+/** True for a real directory or a link to one; false for files and dangling links. */
+export function isDirSafe(p: string): boolean {
+  try {
+    return statSync(p).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
 /** Sorted relative paths of all files below dir, skipping EXCLUDED names. */
 export function listFiles(dir: string): string[] {
   const out: string[] = [];
@@ -59,7 +68,7 @@ export function listFiles(dir: string): string[] {
     for (const name of readdirSync(d).sort()) {
       if (EXCLUDED.has(name)) continue;
       const p = join(d, name);
-      if (statSync(p).isDirectory()) walk(p);
+      if (lstatSync(p).isDirectory()) walk(p); // symlinks are entries, never followed
       else out.push(relative(dir, p).split(sep).join("/"));
     }
   };
@@ -71,7 +80,10 @@ export function listFiles(dir: string): string[] {
 export function hashDir(dir: string, extra = ""): string {
   const h = createHash("sha256");
   for (const rel of listFiles(dir)) {
-    h.update(rel).update("\0").update(readFileSync(join(dir, rel))).update("\0");
+    const full = join(dir, rel);
+    // a link contributes its target string, so a dangling link still hashes deterministically
+    const body = lstatSync(full).isSymbolicLink() ? "link:" + readlinkSync(full) : readFileSync(full);
+    h.update(rel).update("\0").update(body).update("\0");
   }
   h.update("extra\0").update(extra);
   return h.digest("hex").slice(0, 12);
@@ -85,4 +97,13 @@ export function splitId(id: string): { name: string; marketplace: string } {
   const at = id.lastIndexOf("@");
   if (at <= 0) return { name: id, marketplace: "" };
   return { name: id.slice(0, at), marketplace: id.slice(at + 1) };
+}
+
+/** True for a regular file or a link to one; false for dangling links and everything else. */
+export function isFileSafe(p: string): boolean {
+  try {
+    return statSync(p).isFile();
+  } catch {
+    return false;
+  }
 }

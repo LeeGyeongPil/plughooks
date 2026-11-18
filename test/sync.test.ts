@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { appendFileSync, existsSync, readFileSync, rmSync } from "node:fs";
+import { appendFileSync, existsSync, readFileSync, rmSync, symlinkSync } from "node:fs";
 import { test } from "node:test";
 import { cli, json, makeCase } from "./helpers/fixture.js";
 
@@ -86,4 +86,16 @@ test("a deleted copy folder is reported as copy-missing and sync --apply rebuild
   assert.equal(cli(c, ["sync", "--apply"]).code, 0);
   assert.ok(existsSync(`${c.claudeDir}/plughooks-marketplace/plugins/noisy-nohooks/skills/hello/SKILL.md`));
   assert.equal(json<SyncJson>(cli(c, ["sync", "--check", "--json"])).items[0].status, "up-to-date");
+});
+
+test("dangling symlink: sync works and a changed link target counts as changed", { skip: process.platform === "win32" }, () => {
+  const c = makeCase({}, { demo: true });
+  const link = c.p("marketplaces/demo-mkt/plugins/noisy/dangling");
+  symlinkSync("/nonexistent/a", link);
+  assert.equal(cli(c, ["trim", "noisy@demo-mkt", "--apply"]).code, 0);
+  assert.equal(cli(c, ["sync", "--check"]).code, 0);
+  rmSync(link);
+  symlinkSync("/nonexistent/b", link);
+  assert.equal(cli(c, ["sync", "--check"]).code, 1);
+  assert.equal(cli(c, ["sync", "--apply"]).code, 0);
 });

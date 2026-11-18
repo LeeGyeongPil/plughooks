@@ -8,7 +8,7 @@ import { MODULE_KEYS, scanPluginRows, type PluginInfo } from "./plugins.js";
 import { findPlugin, type Resolved } from "./resolve.js";
 import { settingsPath } from "./settings.js";
 import type { DropSpec, HookRow, Layer } from "./types.js";
-import { copyTree, hashDir, isObj, readJsonFile, type Obj } from "./util.js";
+import { copyTree, hashDir, isDirSafe, isFileSafe, isObj, readJsonFile, type Obj } from "./util.js";
 
 export const MARKET_NAME = "plughooks-local";
 export const LOCK_FILE = "plughooks-lock.json";
@@ -45,8 +45,8 @@ function mdFiles(root: string): string[] {
     if (!existsSync(d)) return;
     for (const n of readdirSync(d).sort()) {
       const p = join(d, n);
-      if (statSync(p).isDirectory()) walk(p);
-      else if (n.endsWith(".md")) out.push(p);
+      if (isDirSafe(p)) walk(p);
+      else if (n.endsWith(".md") && isFileSafe(p)) out.push(p);
     }
   };
   for (const d of MD_DIRS) walk(join(root, d));

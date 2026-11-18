@@ -182,3 +182,25 @@ test("CI-1 the copy is made file by file: modes, links and skipped names are the
   copyTree(d.p("src"), d.p("all"), new Set());
   assert.ok(existsSync(d.p("all/.orphaned_at")), "an empty skip set copies everything");
 });
+
+test("dangling symlink in a plugin does not stop trim (dry-run and apply)", { skip: process.platform === "win32" }, () => {
+  const c = makeCase({}, { demo: true });
+  const link = c.p("marketplaces/demo-mkt/plugins/noisy/dangling");
+  symlinkSync("/nonexistent/target", link);
+  symlinkSync("/nonexistent/skill-target", c.p("marketplaces/demo-mkt/plugins/noisy/skills/broken"));
+  assert.equal(cli(c, ["list"]).code, 0);
+  assert.equal(cli(c, ["trim", "noisy@demo-mkt"]).code, 0);
+  assert.equal(cli(c, ["trim", "noisy@demo-mkt", "--apply"]).code, 0);
+  const copy = `${c.claudeDir}/plughooks-marketplace/plugins/noisy-nohooks/dangling`;
+  assert.equal(readlinkSync(copy), "/nonexistent/target");
+});
+
+test("dangling symlink named *.md under skills/ does not break list, doctor, trim, sync", { skip: process.platform === "win32" }, () => {
+  const c = makeCase({}, { demo: true });
+  symlinkSync("/nonexistent/broken-target", c.p("marketplaces/demo-mkt/plugins/noisy/skills/broken.md"));
+  assert.equal(cli(c, ["list"]).code, 0);
+  assert.equal(cli(c, ["doctor"]).code, 0);
+  assert.equal(cli(c, ["trim", "noisy@demo-mkt"]).code, 0);
+  assert.equal(cli(c, ["trim", "noisy@demo-mkt", "--apply"]).code, 0);
+  assert.equal(cli(c, ["sync"]).code, 0);
+});

@@ -1,6 +1,6 @@
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { isObj, readJsonFile, splitId, type Obj } from "./util.js";
+import { isDirSafe, isFileSafe, isObj, readJsonFile, splitId, type Obj } from "./util.js";
 import { readInstalled, selectRecords, type InstallRecord } from "./installed.js";
 import { readFrontmatterHooks, FlowStyleError } from "./frontmatter.js";
 import { extractEvents, unwrap, withSource } from "./hooks.js";
@@ -39,7 +39,7 @@ export interface Discovery {
 
 function dirs(p: string): string[] {
   if (!existsSync(p)) return [];
-  return readdirSync(p).filter((n) => statSync(join(p, n)).isDirectory()).sort();
+  return readdirSync(p).filter((n) => isDirSafe(join(p, n))).sort();
 }
 
 function readObj(file: string): Obj | undefined {
@@ -187,8 +187,8 @@ function markdownFiles(root: string): string[] {
     if (!existsSync(d)) return;
     for (const n of readdirSync(d).sort()) {
       const p = join(d, n);
-      if (statSync(p).isDirectory()) walk(p);
-      else if (n.endsWith(".md")) out.push(p);
+      if (isDirSafe(p)) walk(p);
+      else if (n.endsWith(".md") && isFileSafe(p)) out.push(p);
     }
   };
   for (const d of MD_DIRS) walk(join(root, d));
