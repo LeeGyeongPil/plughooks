@@ -1,5 +1,5 @@
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { PlugError } from "./errors.js";
 import { FlowStyleError, stripFrontmatterHooks } from "./frontmatter.js";
 import { KNOWN_EVENTS, unwrap } from "./hooks.js";
@@ -8,7 +8,7 @@ import { MODULE_KEYS, scanPluginRows, type PluginInfo } from "./plugins.js";
 import { findPlugin, type Resolved } from "./resolve.js";
 import { settingsPath } from "./settings.js";
 import type { DropSpec, HookRow, Layer } from "./types.js";
-import { EXCLUDED, hashDir, isObj, readJsonFile, type Obj } from "./util.js";
+import { copyTree, hashDir, isObj, readJsonFile, type Obj } from "./util.js";
 
 export const MARKET_NAME = "plughooks-local";
 export const LOCK_FILE = "plughooks-lock.json";
@@ -157,7 +157,7 @@ export function materialize(inp: MaterializeInput): { copyDir: string; entry: Ob
   mkdirSync(out, { recursive: true });
   rmSync(tmp, { recursive: true, force: true });
   try {
-    cpSync(source.dir, tmp, { recursive: true, filter: (s) => !EXCLUDED.has(basename(s)) });
+    copyTree(source.dir, tmp); // file-by-file copy, same on every OS and Node version
     stripHooks(tmp, drop);
 
     // rename inside plugin.json (or create a minimal one)

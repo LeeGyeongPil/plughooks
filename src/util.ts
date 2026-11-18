@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, readlinkSync, statSync, symlinkSync } from "node:fs";
+import { join, relative, resolve, sep } from "node:path";
 import { PlugError } from "./errors.js";
 
 export type Json = null | boolean | number | string | Json[] | { [k: string]: Json };
@@ -23,6 +23,34 @@ export function readJsonFile(file: string): unknown {
 
 /** Names never copied or hashed: bookkeeping that is not part of the plugin content. */
 export const EXCLUDED = new Set([".orphaned_at", ".git", "node_modules"]);
+
+/**
+ * Copy a folder tree file by file, skipping `skip` names (default: EXCLUDED).
+ *
+ * fs.cpSync is not used on purpose: since Node 22 it has a native fast path whose behaviour
+ * differs between Node versions and operating systems (open Node issues about aborts, EACCES
+ * and subdirectory checks). Plain readdir + mkdir + copyFileSync behaves the same everywhere.
+ * Files keep their mode (copyFileSync copies it), symlinks are recreated as links, and the
+ * destination is skipped if it happens to lie inside the source.
+ */
+export function copyTree(src: string, dest: string, skip: ReadonlySet<string> = EXCLUDED): void {
+  const destRoot = resolve(dest);
+  const walk = (from: string, to: string): void => {
+    mkdirSync(to, { recursive: true });
+    for (const name of readdirSync(from).sort()) {
+      if (skip.has(name)) continue;
+      const s = join(from, name);
+      const d = join(to, name);
+      if (resolve(s) === destRoot) continue; // never copy the copy into itself
+      const st = lstatSync(s);
+      if (st.isSymbolicLink()) symlinkSync(readlinkSync(s), d);
+      else if (st.isDirectory()) walk(s, d);
+      else if (st.isFile()) copyFileSync(s, d);
+      // sockets, fifos and devices are not plugin content: skipped
+    }
+  };
+  walk(src, dest);
+}
 
 /** Sorted relative paths of all files below dir, skipping EXCLUDED names. */
 export function listFiles(dir: string): string[] {

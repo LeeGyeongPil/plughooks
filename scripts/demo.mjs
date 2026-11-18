@@ -5,7 +5,7 @@
 // Usage: npm run demo            (language from PLUGHOOKS_LANG / LC_ALL / LC_MESSAGES / LANG)
 //        npm run demo -- --lang ko
 import { spawnSync } from "node:child_process";
-import { appendFileSync, cpSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { appendFileSync, copyFileSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -62,6 +62,16 @@ const t = TEXT[lang];
 
 // 1. temp copy of the fixture; "__ROOT__" in the fixture files becomes the temp folder
 const root = mkdtempSync(join(tmpdir(), "plughooks-demo-"));
+// plain file-by-file copy (fs.cpSync's native fast path differs between Node versions and OSes)
+const copy = (from, to) => {
+  mkdirSync(to, { recursive: true });
+  for (const name of readdirSync(from)) {
+    const s = join(from, name);
+    const d = join(to, name);
+    if (statSync(s).isDirectory()) copy(s, d);
+    else copyFileSync(s, d);
+  }
+};
 const fill = (dir) => {
   for (const name of readdirSync(dir)) {
     const p = join(dir, name);
@@ -94,7 +104,7 @@ const step = (title, args) => {
 };
 
 try {
-  cpSync(join(repo, "examples", "demo"), root, { recursive: true });
+  copy(join(repo, "examples", "demo"), root);
   // the fixture is stored as .fixture because global gitignores often hide settings.local.json
   renameSync(join(root, "project", ".claude", "settings.local.json.fixture"), join(root, "project", ".claude", "settings.local.json"));
   fill(root);
