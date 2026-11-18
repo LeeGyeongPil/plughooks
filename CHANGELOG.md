@@ -3,6 +3,12 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-11-19
+
+### Fixed
+- Copying plugin folders no longer depends on `fs.cpSync` (own `copyTree`), which failed on some CI Node versions.
+- CI workflow hardened; `.gitattributes` keeps line endings stable; added a regression test for the copy path.
+
 ## [0.1.0] - 2026-11-19
 
 First release.
