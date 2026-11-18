@@ -6,9 +6,19 @@ on:
   schedule:
     - cron: "17 3 * * 1"   # weekly: catch Node or dependency changes
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+# a newer push to the same branch cancels the older run
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -20,7 +30,11 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
-      - run: npm ci
+      - name: Show tool versions
+        run: |
+          node --version
+          npm --version
+      - run: npm ci --no-audit --no-fund
       - run: npm test
       - run: npm run build
       - run: node dist/cli.js --version
