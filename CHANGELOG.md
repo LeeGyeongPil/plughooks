@@ -3,7 +3,10 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.1.3] - 2026-11-19
+
+### Fixed
+- `doctor` W010 now says a copy folder was deleted (with the `sync --apply` fix) instead of showing an identical hash pair as if the source changed.
 
 ## [0.1.2] - 2026-11-19
 

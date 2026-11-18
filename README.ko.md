@@ -26,7 +26,7 @@ npm install -g .      # plughooks 명령을 PATH 에 둡니다
 plughooks --version
 ```
 ```text
-0.1.2
+0.1.3
 ```
 
 전역 설치 없이 clone 한 폴더에서 `node dist/cli.js <명령>` 으로 실행해도 됩니다.
@@ -164,7 +164,7 @@ flowchart LR
 
 ### 한계
 
-설치된 플러그인 파일 형식은 공개 문서와 이슈 보고를 근거로 하며 모든 실제 설치를 확인한 것은 아닙니다. 프런트매터는 블록 스타일 YAML 만 읽습니다. 아직 지원하지 않는 것(기껏해야 경고): hooks module, `--plugin-dir` 로 불러온 플러그인(`@inline`), `@synced` 플러그인, `--add-dir`·`--settings` 의 훅. 플러그인이 선언한 파일만 읽으며 `claude` 를 실행하지 않습니다. 알려진 거친 부분: 사본 폴더를 지우면 `doctor` W010 이 원본이 바뀐 것처럼 표현합니다(`sync --check` 는 `copy-missing` 으로 맞게 보고). 이미 적용한 `trim` 을 다시 `--apply` 하면 빈 `Diff:` 가 나오고 번호 붙은 백업이 또 만들어집니다.
+설치된 플러그인 파일 형식은 공개 문서와 이슈 보고를 근거로 하며 모든 실제 설치를 확인한 것은 아닙니다. 프런트매터는 블록 스타일 YAML 만 읽습니다. 아직 지원하지 않는 것(기껏해야 경고): hooks module, `--plugin-dir` 로 불러온 플러그인(`@inline`), `@synced` 플러그인, `--add-dir`·`--settings` 의 훅. 플러그인이 선언한 파일만 읽으며 `claude` 를 실행하지 않습니다. 알려진 거친 부분: 이미 적용한 `trim` 을 다시 `--apply` 하면 빈 `Diff:` 가 나오고 번호 붙은 백업이 또 만들어집니다.
 
 ## 개발·기여
 ```bash
