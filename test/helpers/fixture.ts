@@ -4,9 +4,10 @@
 // the "realistic" cases.
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
+import { copyTree } from "../../src/util.js";
 
 /** Repository root (this file runs from dist-test/test/helpers). */
 export const REPO = resolve(import.meta.dirname, "../../..");
@@ -45,7 +46,8 @@ export function makeCase(files: Files = {}, opts: { demo?: boolean } = {}): Case
   const root = mkdtempSync(join(tmpdir(), "plughooks-test-"));
   roots.push(root);
   if (opts.demo === true) {
-    cpSync(join(REPO, "examples", "demo"), root, { recursive: true });
+    // plain copy (same on every OS and Node version); nothing skipped, the fixture needs .orphaned_at
+    copyTree(join(REPO, "examples", "demo"), root, new Set());
     // global gitignores often hide settings.local.json, so the fixture ships under another name
     renameSync(join(root, "project", ".claude", "settings.local.json.fixture"), join(root, "project", ".claude", "settings.local.json"));
     fillRoot(root, root);

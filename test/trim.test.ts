@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { chmodSync, existsSync, readdirSync, readFileSync, readlinkSync, statSync, symlinkSync } from "node:fs";
 import { test } from "node:test";
+import { copyTree } from "../src/util.js";
 import { cli, json, makeCase, treeHash, type Case } from "./helpers/fixture.js";
 
 const NOISY = "noisy@demo-mkt";
@@ -159,4 +160,25 @@ test("Q-6 a second trim keeps the indentation of the marketplace entry", () => {
   const indent = (l: string): number => /^ */.exec(l)?.[0].length ?? 0;
   assert.equal(indent(lines[at + 1]), indent(lines[at]) + 2, "child is one level deeper than its key");
   assert.equal(indent(lines[at + 2]), indent(lines[at]) + 4);
+});
+
+test("CI-1 the copy is made file by file: modes, links and skipped names are the same on every OS", () => {
+  const c = makeCase({}, { demo: true });
+  const script = `${srcDir(c)}/scripts/allow.sh`;
+  chmodSync(script, 0o755); // a plugin script that must stay runnable in the copy
+  symlinkSync("allow.sh", `${srcDir(c)}/scripts/allow-link.sh`);
+  c.write("marketplaces/demo-mkt/plugins/noisy/node_modules/x/index.js", "x\n");
+  assert.equal(cli(c, ["trim", NOISY, "--apply"]).code, 0);
+  assert.equal(statSync(`${copyDir(c)}/scripts/allow.sh`).mode & 0o777, 0o755);
+  assert.equal(readlinkSync(`${copyDir(c)}/scripts/allow-link.sh`), "allow.sh");
+  assert.ok(!existsSync(`${copyDir(c)}/node_modules`), "node_modules is not copied");
+  assert.ok(!existsSync(`${out(c)}/.plughooks-tmp-noisy-nohooks`), "temp folder is gone");
+
+  // unit level: a destination inside the source is never copied into itself
+  const d = makeCase({ "src/a.txt": "a\n", "src/sub/b.txt": "b\n", "src/.orphaned_at": "1\n" });
+  copyTree(d.p("src"), d.p("src/inner-copy"));
+  assert.deepEqual(readdirSync(d.p("src/inner-copy")).sort(), ["a.txt", "sub"]);
+  assert.equal(d.read("src/inner-copy/sub/b.txt"), "b\n");
+  copyTree(d.p("src"), d.p("all"), new Set());
+  assert.ok(existsSync(d.p("all/.orphaned_at")), "an empty skip set copies everything");
 });
